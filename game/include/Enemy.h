@@ -11,6 +11,7 @@ class Enemy : public Entity
 public:
 	static Mesh mesh;
 	static Texture tex;
+	static glm::mat4 rotation;
 
 	Enemy();
 	void draw(Shader& shader);

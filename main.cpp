@@ -47,7 +47,7 @@ int main()
 	Enemy enemy;
 	Enemy enemy2;
 
-	#define numEnemies 50
+	#define numEnemies 100
 	Enemy enemies[numEnemies];
 	for(int i = 0; i < numEnemies; i++)
 	{
@@ -78,7 +78,8 @@ int main()
 		//getting the dt - holy shit this is a verbose call
 		int ms = std::chrono::duration_cast<std::chrono::microseconds>(clock.now() - lastTime).count();
 		lastTime = clock.now();
-		dt = ((float)ms)/1000000;
+		//1,000,000 microseconds in a second
+		dt = ((float)ms)/1000000; //this is in seconds
 
 		std::cout << "fps: " << 1.0/dt << std::endl;
 		//polling events
@@ -111,22 +112,18 @@ int main()
 	      break;
 	    }
 	  }
-	  camControl.update(0.01);
+	  camControl.update(dt);
 	  lightingShader.setUniform("camera", perspective*cam.getMatrix());
 
 
-	  enemy.update(dt);
+	  // enemy.update(dt);
 
 	  //drawing takes place here
 	  window.clear();
 
 	  lightingShader.bind();
 
-	  // cube.bind();
-	  // cube.draw();
-
 	  enemy.draw(lightingShader);
-	  enemy2.draw(lightingShader);
 
 	  for(int i = 0; i < numEnemies; i++)
 	  {

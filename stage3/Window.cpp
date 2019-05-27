@@ -34,6 +34,9 @@ namespace s3
 	  //create context
 	  SDL_GLContext mainContext = SDL_GL_CreateContext(window);
 
+	  //disable v-sync
+	  SDL_GL_SetSwapInterval(0);
+
 	  glEnable(GL_DEPTH_TEST);
 
 	  //this is critical, seg fault happens without it

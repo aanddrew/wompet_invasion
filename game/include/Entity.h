@@ -6,8 +6,11 @@
 
 /*
 An entity is a 3d object that moves around the world.
+
+This is an abstract class that requires the implementation of 
+the update method to be handled by its children.
 */
-class Entity
+class Entity //abstract
 {
 public:
 	const glm::vec3& getPos();

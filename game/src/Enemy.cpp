@@ -3,12 +3,13 @@
 #include <iostream>
 
 Mesh Enemy::mesh = Mesh("game/res/models/wompet.obj");
-Texture Enemy::tex = Texture("game/res/textures/gameEnemyTexture.png");
+Texture Enemy::tex = Texture("game/res/textures/wompet.png");
 bool Enemy::meshInit = false;
 bool Enemy::texInit = false;
 // Mesh Enemy::mesh = Mesh();
 
-// namespace fs = std::filesystem;
+
+glm::mat4 Enemy::rotation = glm::mat4(1.0f);
 
 Enemy::Enemy()
 {
@@ -35,7 +36,7 @@ Enemy::Enemy()
 void Enemy::draw(Shader& shader)
 {
 	shader.bind();
-	shader.setUniform("model", glm::translate(glm::mat4(1.0f), this->getPos()));
+	shader.setUniform("model", glm::translate(glm::mat4(1.0f), this->getPos()) *  rotation);
 
 	// std::cout << "getPos(): " << getPos()[0] << ", " << getPos()[1] << ", " << getPos()[2] << std::endl;
 
