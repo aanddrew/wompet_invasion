@@ -27,6 +27,7 @@ private:
 	glm::vec3 pos;
 	glm::vec3 velocity;
 
+	bool falling;
 	//this will be used for collision
 	float radius;
 };

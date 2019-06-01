@@ -18,7 +18,7 @@
 class Game
 {
 public:
-	Game();
+	Game(SDL_Window* window, int, int);
 
 	void handleInputEvent(const SDL_Event& e);
 	void update(float dt);
@@ -28,7 +28,7 @@ public:
 	bool isPaused();
 
 	//gravitational constant vector, magnitude is in units/s/s
-	glm::vec3 gravity = glm::vec3(0.0f, -0.5f, 0.0f);
+	glm::vec3 gravity = glm::vec3(0.0f, -32.0f, 0.0f);
 
 private:
 	//shader for the game
@@ -46,6 +46,10 @@ private:
 	//tricky part, creating the level of enemies
 	std::vector<Enemy> enemies;
 	Player player;
+
+	SDL_Window* window;
+	int width;
+	int height;
 
 	glm::mat4 projection;
 	float fov;

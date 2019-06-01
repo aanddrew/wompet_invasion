@@ -4,6 +4,11 @@
 #include <iostream>
 #include <GL/glew.h>
 
+Texture::Texture()
+{
+	this->data = nullptr;
+}
+
 Texture::Texture(std::string fileName)
 {
 	this->data = stbi_load(fileName.c_str(), &width, &height, &numChannels, 0);
@@ -17,7 +22,8 @@ Texture::Texture(std::string fileName)
 Texture::~Texture()
 {
 	//gotta free that data B)
-	stbi_image_free(data);
+	if (data != nullptr)
+		stbi_image_free(data);
 }
 
 void Texture::bind()

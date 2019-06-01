@@ -1,16 +1,21 @@
 #include "../include/Game.h"
 
 #include <iostream>
+#include <thread>
 
-#define numEnemies 1000
+#define numEnemies 100
 
-Game::Game()
+Game::Game(SDL_Window* windowIn, int widthIn,  int heightIn)
 :
 level("game/res/levels/level.lvl"),
 lightingShader("game/res/shaders/basicVertexShader.GLSL", "game/res/shaders/basicFragmentShader.GLSL"),
 pc(&player),
 ec(&enemies, &player)
 {
+	this->window = windowIn;
+	width = widthIn;
+	height = heightIn;
+
 	paused = false;
 
 	lightingShader.bind();
@@ -60,9 +65,10 @@ void Game::handleInputEvent(const SDL_Event& e)
 		case SDL_MOUSEBUTTONUP:
 		  // mouseClicked = false;
 		break;
+		//antiquated
 		case SDL_MOUSEMOTION:
-		  // if (mouseClicked)
-		  pc.mouseInput(e.motion.xrel, e.motion.yrel);
+		{
+		}
 		break;
 	}
 }
@@ -73,21 +79,41 @@ void Game::update(float dt)
 	{
 		return;
 	}
-	pc.update(dt);
 
+	player.setVelocity(player.getVelocity() + gravity*dt);
 	player.update(dt);
+
+	level.collide((Entity*) &player, dt);
+	// std::cout << player.getVelocity()[1] << std::endl;
 	for(int i = 0; i < enemies.size(); i++)
 	{
+		// level.collide((Entity*) &enemies.at(i), dt);
 		enemies.at(i).update(dt);
 	}
 
-	
+	//handling mouse input
+
+	int x,y;
+	SDL_GetMouseState(&x, &y);
+
+	// std::cout << "x: " << x << ", y: " << y << std::endl;
+	int dx = x - (width/2);
+	int dy = y - (height/2);
+
+	pc.mouseInput(dx, dy);
+	pc.update(dt);
+
+	if (dx != 0 || dy != 0)
+		SDL_WarpMouseInWindow(window, width/2, height/2);
+
+	//mouse input handled
 
 	//if the round is over, increment round
 }
 
 void Game::draw()
 {
+	lightingShader.bind();
 	lightingShader.setUniform("camera", projection*(player.getCamera().getMatrix()));
 	// std::cout << player.getCamera().getForward()[0] << player.getCamera().getForward()[1] << player.getCamera().getForward()[2] << std::endl;
 
@@ -97,6 +123,8 @@ void Game::draw()
 		// std::cout << enemies.at(i).getPos()[0] << enemies.at(i).getPos()[1] << enemies.at(i).getPos()[2] << std::endl;
 		enemies.at(i).draw(lightingShader);
 	}
+
+	level.draw(lightingShader);
 }
 
 bool Game::isPaused() {return paused;}

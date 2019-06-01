@@ -338,3 +338,12 @@ void Mesh::draw() const
 	//our data is stored as triangulated faces in format
 	glDrawArrays(GL_TRIANGLES, 0, numVertices);
 }
+
+const std::vector<GLfloat>& Mesh::getVertices()
+{
+	return vertex_buffer_vector;
+}
+const std::vector<GLfloat>& Mesh::getNormals()
+{
+	return normal_buffer_vector;
+}

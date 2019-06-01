@@ -16,6 +16,9 @@ public:
 	void mouseInput(int dx, int dy);
 
 	void update(float dt);
+
+	const float RUN_SPEED = 24.0f;
+	const float WALK_SPEED = 12.0f;
 private:
 	float moveSpeed;
 	float mouseSens;
@@ -28,6 +31,7 @@ private:
 		FORWARD,
 		BACK,
 		JUMP,
+		WALK,
 		NUM_MOVES,
 	};
 	bool moving[NUM_MOVES];

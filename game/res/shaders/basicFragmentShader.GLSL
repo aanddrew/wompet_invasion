@@ -12,7 +12,7 @@ uniform sampler2D ourTexture;
 void main(){
 	vec3 lightSource = vec3(1,2,3);
 	vec3 normLight = normalize(lightSource);
-	float mod = clamp(dot(normalOut, normLight), 0.3, 1);
+	float mod = clamp(dot(normalOut, normLight), 0.6, 1);
 	//changes the color of every fragment
 	color = texture(ourTexture, texCoordOut) * mod;
 }

@@ -7,6 +7,7 @@
 class Texture
 {
 public:
+	Texture();
 	//the file to load must be a png with 24 bit (rgba) color depth.
 	//I.E. you must add an alpha channel and export the image as a png
 	Texture(std::string fileName);

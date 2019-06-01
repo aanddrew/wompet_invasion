@@ -4,8 +4,8 @@ PlayerController::PlayerController(Player* pIn)
 :
 dv(0.0f, 0.0f, 0.0f)
 {
-	moveSpeed = 16.0f;
-	mouseSens = 3.0f;
+	moveSpeed = 24.0f;
+	mouseSens = 1.0f;
 
 	player = pIn;
 	camera = &(player->getCamera());
@@ -34,6 +34,9 @@ void PlayerController::keyInput(int key, bool pressed)
 		case SDLK_d:
 			moving[RIGHT] = pressed;
 		break;
+		case SDLK_LSHIFT:
+			moving[WALK] = pressed;
+		break;
 		//jumping
 		case SDLK_SPACE:
 			moving[JUMP] = pressed;
@@ -58,17 +61,25 @@ void PlayerController::update(float dt)
 	//reset our dv
 	dv = glm::vec3(0.0f, 0.0f, 0.0f);
 
+	glm::vec3 alignedForward(player->getCamera().getForward()[0], 0.0f, player->getCamera().getForward()[2]);
+	alignedForward = glm::normalize(alignedForward);
+
+	if (moving[WALK])
+		moveSpeed = WALK_SPEED;
+	else
+		moveSpeed = RUN_SPEED;
+
 	if (moving[FORWARD])
 	{
-		dv[0] += player->getCamera().getForward()[0] * moveSpeed; 
-		dv[1] += player->getCamera().getForward()[1] * moveSpeed;
-		dv[2] += player->getCamera().getForward()[2] * moveSpeed;
+		dv[0] += alignedForward[0] * moveSpeed; 
+		dv[1] += alignedForward[1] * moveSpeed;
+		dv[2] += alignedForward[2] * moveSpeed;
 	}
 	if (moving[BACK])
 	{
-		dv[0] += player->getCamera().getForward()[0] * -1* moveSpeed; 
-		dv[1] += player->getCamera().getForward()[1] * -1* moveSpeed;
-		dv[2] += player->getCamera().getForward()[2] * -1* moveSpeed;
+		dv[0] += alignedForward[0] * -1* moveSpeed; 
+		dv[1] += alignedForward[1] * -1* moveSpeed;
+		dv[2] += alignedForward[2] * -1* moveSpeed;
 	}
 	if (moving[LEFT])
 	{
@@ -85,11 +96,18 @@ void PlayerController::update(float dt)
 
 	player->setVelocity(player->getVelocity() + dv);
 
+
 	//camera rotations
-	camera->rotateUp(deltaRotateUp*dt);
-	camera->rotateRight(deltaRotateRight*dt);
+	camera->rotateUp(deltaRotateUp*0.003f);
+	camera->rotateRight(deltaRotateRight*0.003f);
 
 	//clear our mouse rotations
 	deltaRotateUp = 0.0f;
 	deltaRotateRight = 0.0f;
+
+	if (moving[JUMP])
+	{
+		moving[JUMP] = false;
+		player->setVelocity(player->getVelocity() + glm::vec3(0.0f, 15.0f, 0.0f));
+	}
 }

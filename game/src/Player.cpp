@@ -4,6 +4,7 @@ Player::Player()
 :
 camera()
 {
+	setRadius(3);
 	cash = 0;
 
 	setPos(glm::vec3(0.0f, 0.0f, 5.0f));

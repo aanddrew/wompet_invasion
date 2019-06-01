@@ -13,6 +13,7 @@ glm::mat4 Enemy::rotation = glm::mat4(1.0f);
 
 Enemy::Enemy()
 {
+	setRadius(1.0f);
 	setPos(glm::vec3(0.0f, 0.0f, 0.0f));
 	setVelocity(glm::vec3(1.0f, 0.1f, 0.5f));
 

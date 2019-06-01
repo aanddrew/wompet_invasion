@@ -17,6 +17,9 @@ public:
 	void bind() const;
 	void draw() const;
 
+	const std::vector<GLfloat>& getVertices();
+	const std::vector<GLfloat>& getNormals();
+
 	//make these private later
 	//vertices
 
