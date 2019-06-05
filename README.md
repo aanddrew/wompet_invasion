@@ -1,5 +1,7 @@
 Welcome to Wompet Invasion, a wave based 3D first-person shooter.
 
+[Here's a video detailing the project.](https://www.youtube.com/watch?v=mi4B1LzSVxQ)
+
 You must defeat the wompets or they will end the world.
 
 Made using my very own [Stage3 graphics engine.](https://github.com/andrewwellercs/stage3)
