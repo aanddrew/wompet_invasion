@@ -8,3 +8,4 @@ void Entity::setVelocity(glm::vec3 newVelocity) {velocity = newVelocity;}
 
 const float& Entity::getRadius() {return radius;}
 void Entity::setRadius(float newRadius) {radius = newRadius;}
+

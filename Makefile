@@ -6,7 +6,7 @@ CC = g++
 
 # the flags for the compiler 
 #-w surpresses all warnings
-COMPILER_FLAGS = -std=c++11 -w
+COMPILER_FLAGS = -g -std=c++11 -w
 
 #the libraries we're linking against
 LINKER_FLAGS = -lSDL2 -lGL -lglut -lGLEW -lm

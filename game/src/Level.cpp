@@ -1,6 +1,7 @@
 #include "../include/Level.h"
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
 #include <glm/gtc/quaternion.hpp>
@@ -15,7 +16,7 @@ void printVec(const glm::vec3& vec)
 PhysTriangle::PhysTriangle(float* start, glm::vec3(outwardNormal))
 {
 	//counter clockwise is the default
-	glm::vec3 points[3];
+	// glm::vec3 points[3];
 	for(int i = 0; i < 3; i++)
 	{
 		points[i] = glm::vec3(start[3*i + 0], start[3*i + 1], start[3*i + 2]);
@@ -60,6 +61,24 @@ PhysTriangle::PhysTriangle(float* start, glm::vec3(outwardNormal))
 
 //END PHYSTYRIANGLE STUFF
 
+//helpful for parsing the file, thanks to my intro cs course for this function
+void levelSplit(std::string temp, std::string words[], char del, int maxWords)
+{
+	std::stringstream tempStream(temp);
+	int i = 0;
+	std::string tempFromTemp;
+	while(std::getline(tempStream, tempFromTemp, del))
+	{
+		if (i == maxWords)
+			return;
+		words[i] = tempFromTemp;
+		i++;
+	}
+}
+
+//END HELPERS=================================
+//==========================================
+
 //this file is the level file
 Level::Level(const std::string& fileName)
 {
@@ -81,6 +100,31 @@ Level::Level(const std::string& fileName)
 	std::cout << "Loading level texture into graphics memory" << std::endl;
 	tex->load();
 
+	std::getline(inFile, temp);
+
+	if (temp[0] == 's')
+	{
+		while(std::getline(inFile,temp))
+		{
+			if (temp == "/s")
+				break;
+
+			std::string nums[3];
+
+			levelSplit(temp, nums, ',', 3);
+
+			spawns.push_back(
+				glm::vec3
+				(
+					std::stof(nums[0]), 
+					std::stof(nums[1]), 
+					std::stof(nums[2])
+				)
+			);
+			//adds a spawn point at this vector
+		}
+	}
+
 
 	//not a copy operation - I think
 	std::vector<float> vertexArray = mesh->getVertices();
@@ -92,54 +136,29 @@ Level::Level(const std::string& fileName)
 		glm::vec3 norm = glm::vec3(normalArray[i*9 + 0], normalArray[i*9 + 1], normalArray[i*9 + 2]);
 		walls.push_back(PhysTriangle(&(vertexArray[i*9]), norm));
 	}
-
-	//now we have the list of walls in the level
-	//let's turn it into a spatial hash map
-	//first, find out how big the map is. Largest x, y, and z value
-
-	//PROBLEM: we need to check all points on the triangle, not just the center
-
-	glm::vec3 largest(-1000.0f, -1000.0f, -1000.0f);
-	glm::vec3 smallest(1000.0f, 1000.0f, 1000.0f);
-	for(int i = 0; i < walls.size(); i++)
-	{
-		if (walls.at(i).centerPoint[0] < smallest[0])
-			smallest[0] = walls.at(i).centerPoint[0];
-		if (walls.at(i).centerPoint[1] < smallest[1])
-			smallest[1] = walls.at(i).centerPoint[1];
-		if (walls.at(i).centerPoint[2] < smallest[2])
-			smallest[2] = walls.at(i).centerPoint[2];
-
-		if (walls.at(i).centerPoint[0] > largest[0])
-			largest[0] = walls.at(i).centerPoint[0];
-		if (walls.at(i).centerPoint[1] > largest[1])
-			largest[1] = walls.at(i).centerPoint[1];
-		if (walls.at(i).centerPoint[2] > largest[2])
-			largest[2] = walls.at(i).centerPoint[2];
-	}
-	//we now have a bounding cuboid
-
-	float sizeXFloat = largest[0] - smallest[0];
-	float sizeYFloat = largest[1] - smallest[1];
-	float sizeZFloat = largest[2] - smallest[2];
-
-	//the +2 is padding because the conversion pads it down, we must pad it back up
-	size_x = (int)(sizeXFloat + 2) / LEVEL_GRANULARITY;
-	size_y = (int)(sizeYFloat + 2) / LEVEL_GRANULARITY;
-	size_z = (int)(sizeZFloat + 2) / LEVEL_GRANULARITY;
-
-	int START_X = smallest[0] / LEVEL_GRANULARITY;		
 }
 
 void Level::collide(Entity* e, float dt)
 {
-	// std::cout << "walls size: " << walls.size() << std::endl;
+	// std::cout << "x: " << e->getPos()[0] << " y: " << e->getPos()[1] << " z: " << e->getPos()[2] << std::endl;
+	// glm::vec3 spawn1 = spawns[0];
+	// std::cout << glm::length(e->getPos() - spawn1) << std::endl;
+
+	//this method could have been improved through spatial hashing
+	//however, I have failed in different attempts to get it to work,
+	//so the game is being changed so that the only entity colliding with the level
+	//is the player themselves
+
 	for(int i = 0; i < walls.size(); i++)
 	{
 		glm::vec3 nextPos = e->getPos() + (e->getVelocity()*dt);
 		bool collision = true;
-		// std::cout << "new wall" << std::endl;
-		// std::cout << "Hi" << std::endl;
+
+		float centerDot = glm::dot(walls.at(i).centerNormal, (nextPos - walls.at(i).centerPoint));
+		//now we check the dot with centernorm
+		if (abs(centerDot) > e->getRadius())
+			continue;
+
 		//check if player is inside triangle
 		for(int j = 0; j < 3 && collision; j++)
 		{
@@ -149,18 +168,10 @@ void Level::collide(Entity* e, float dt)
 			}
 		}
 
+		//if its not a collsion we can move on
 		if (!collision)
 			continue;
-
-		// if (collision)
-		// 	std::cout << "inside" << std::endl;
-
-		float centerDot = glm::dot(walls.at(i).centerNormal, (nextPos - walls.at(i).centerPoint));
-		//now we check the dot with centernorm
-		if (abs(centerDot) > e->getRadius())
-			collision = false;
-
-		if (collision)
+		else
 		{
 			//this is the distance between the plane and the edge of the sphere
 			//draw a diagram
@@ -177,7 +188,12 @@ void Level::collide(Entity* e, float dt)
 			else if (sinAngleFromVertical < -0.5f && e->getVelocity()[1] > 0.0f)
 				e->setVelocity(glm::vec3(e->getVelocity()[0], -2.0f, e->getVelocity()[2]));
 		}
-	}
+	} // end for every wall
+}
+
+std::vector<glm::vec3>& Level::getSpawns()
+{
+	return spawns;
 }
 
 void Level::draw(Shader& shader)

@@ -31,6 +31,10 @@ public:
 	glm::vec3 gravity = glm::vec3(0.0f, -32.0f, 0.0f);
 
 private:
+	void shootEnemies();
+
+	float spawnTimer;
+
 	//shader for the game
 	Shader lightingShader;
 

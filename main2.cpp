@@ -23,7 +23,7 @@ int main()
 	s3::Window window(TITLE, WIDTH, HEIGHT);
 	window.setBG(glm::vec3(0.1f, 0.15f, 0.3f));
 
-	SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(1);
 
 	Game game(window.getSDLWindow(), WIDTH, HEIGHT);
 

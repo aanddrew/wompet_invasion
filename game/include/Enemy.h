@@ -11,14 +11,21 @@ class Enemy : public Entity
 public:
 	static Mesh mesh;
 	static Texture tex;
-	static glm::mat4 rotation;
 
 	Enemy();
 	void draw(Shader& shader);
 	void update(float dt);
+
+	float getMoveSpeed();
+
+	bool isAlive();
+	void kill();
 private:
 	static bool meshInit;
 	static bool texInit;
+
+	float moveSpeed;
+	bool alive;
 };
 
 #endif 

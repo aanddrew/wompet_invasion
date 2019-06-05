@@ -15,6 +15,7 @@ public:
 	//these are the points that are in the middle of the edges of the triangle
 	glm::vec3 edgePoints[3];
 	glm::vec3 edgeNormals[3];
+	glm::vec3 points[3];
 
 	//these is the center of the triangle
 	glm::vec3 centerPoint;
@@ -34,20 +35,15 @@ public:
 
 	void draw(Shader& shader);
 
+	std::vector<glm::vec3>& getSpawns();
+
 private:
 	Texture* tex;
 	Mesh* mesh;
 	//"walls" being any piece of collidable geometry in the level
 	std::vector<PhysTriangle> walls;
 
-	//this is our hash map
-	std::vector<PhysTriangle*>*** map;
-
-	int size_x;
-	int size_y;
-	int size_z;
-
-	const float LEVEL_GRANULARITY = 5.0f;
+	std::vector<glm::vec3> spawns;
 };
 
 #endif

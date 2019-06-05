@@ -4,6 +4,8 @@
 #include <fstream>
 #include <sstream>
 
+#ifndef SPLIT_H
+#define SPLIT_H
 //helpful for parsing the file, thanks to my intro cs course for this function
 void split(std::string temp, std::string words[], char del, int maxWords)
 {
@@ -18,6 +20,8 @@ void split(std::string temp, std::string words[], char del, int maxWords)
 		i++;
 	}
 }
+
+#endif
 
 //supposed to read in obj files exporrted from blender
 //with the following settings:

@@ -97,9 +97,12 @@ void PlayerController::update(float dt)
 	player->setVelocity(player->getVelocity() + dv);
 
 
-	//camera rotations
-	camera->rotateUp(deltaRotateUp*0.003f);
-	camera->rotateRight(deltaRotateRight*0.003f);
+	if (dt != 0.0f)
+	{
+		//camera rotations
+		camera->rotateUp(deltaRotateUp*0.005f);
+		camera->rotateRight(deltaRotateRight*0.005f);
+	}
 
 	//clear our mouse rotations
 	deltaRotateUp = 0.0f;
